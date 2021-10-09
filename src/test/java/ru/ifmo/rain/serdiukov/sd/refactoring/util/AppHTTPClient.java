@@ -55,9 +55,9 @@ public class AppHTTPClient implements AutoCloseable {
             }
             final String name = parts[0];
             final String priceString = parts[1].replaceAll("</br>", "");
-            final long price;
+            final int price;
             try {
-                price = Long.parseLong(priceString);
+                price = Integer.parseInt(priceString);
             } catch (final NumberFormatException ignored) {
                 result = Optional.empty();
                 return result;
@@ -79,6 +79,11 @@ public class AppHTTPClient implements AutoCloseable {
 
 
     public void addProduct(final @NotNull @NonNull Product product) throws APIRequestException {
+        if (product.getPrice() < 0){
+            System.out.println("????"); System.out.flush();
+            System.out.flush();
+        }
+
         final String servletUrl = String.format("%s/add-product?name=%s&price=%d", serverUrl, product.getName(), product.getPrice());
         final String responseHTML;
         final int responseStatus;
