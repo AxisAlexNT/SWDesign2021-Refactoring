@@ -5,10 +5,7 @@ import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.ContentResponse;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -79,4 +76,35 @@ public class AppHTTPClient implements AutoCloseable {
 
         return products;
     }
+
+
+    public void addProduct(final @NotNull @NonNull Product product) throws APIRequestException {
+        final String servletUrl = String.format("%s/add-product?name=%s&price=%d", serverUrl, product.getName(), product.getPrice());
+        final String responseHTML;
+        final int responseStatus;
+        try {
+            final ContentResponse response = httpClient.newRequest(servletUrl)
+                    .timeout(5, TimeUnit.SECONDS)
+                    .send();
+            responseHTML = response.getContentAsString();
+            responseStatus = response.getStatus();
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw new APIRequestException("Cannot add product due to the network communication issues", e);
+        }
+
+        if (responseStatus != 200) {
+            throw new APIRequestException("HTTP Status is not 200 OK after requesting add-product");
+        }
+
+        if (!responseHTML.trim().equalsIgnoreCase("OK")) {
+            throw new APIRequestException("Malformed response for adding product");
+        }
+    }
+
+    public void addProducts(final @NotNull @NonNull Collection<Product> products) throws APIRequestException {
+        for (final Product product : products) {
+            addProduct(product);
+        }
+    }
+
 }
