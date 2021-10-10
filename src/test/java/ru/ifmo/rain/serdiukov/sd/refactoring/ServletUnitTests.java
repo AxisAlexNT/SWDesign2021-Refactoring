@@ -33,8 +33,6 @@ public class ServletUnitTests {
         try {
             final List<Product> products = appClient.getProducts();
             assertThat("Product list should not be null", products, is(not(equalTo(null))));
-            final Map<String, Integer> existingProducts = products.parallelStream().collect(Collectors.toMap(Product::getName, Product::getPrice));
-            assertThat("All stored products should have distinct names", existingProducts.size(), is(equalTo(products.size())));
         } catch (APIRequestException e) {
             fail("No exception was expected");
         }
