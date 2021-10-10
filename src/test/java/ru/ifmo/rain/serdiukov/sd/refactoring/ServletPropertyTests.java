@@ -30,7 +30,7 @@ public class ServletPropertyTests {
     }
 
     @Theory
-    @Property(trials = 4)
+    @Property(trials = 64)
     public synchronized void testProductsAreAddedAndSaved(final @NotNull @Size(min = 1, max = 16) Map<Long, Integer> preTestProductRecords) {
         final Map<String, Integer> testProductRecords = preTestProductRecords.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().toString(), Map.Entry::getValue));
         try {
@@ -82,4 +82,11 @@ public class ServletPropertyTests {
             fail("No exception was expected");
         }
     }
+
+    @Theory
+    @Property(trials = 64)
+    public synchronized void testMaximumPricedProductQueryReturnsProductWithMaximalPrice(){
+
+    }
+
 }
