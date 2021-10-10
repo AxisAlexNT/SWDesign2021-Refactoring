@@ -79,11 +79,6 @@ public class AppHTTPClient implements AutoCloseable {
 
 
     public void addProduct(final @NotNull @NonNull Product product) throws APIRequestException {
-        if (product.getPrice() < 0){
-            System.out.println("????"); System.out.flush();
-            System.out.flush();
-        }
-
         final String servletUrl = String.format("%s/add-product?name=%s&price=%d", serverUrl, product.getName(), product.getPrice());
         final String responseHTML;
         final int responseStatus;

@@ -19,21 +19,17 @@ public class SingletonServerStarter {
                 try {
                     Main.main(new String[0]);
                 } catch (final InterruptedException ignored) {
-                    System.out.println("Server thread interrupted");
-                    System.out.flush();
                     // That's ok, we are shutting down server after tests
                 } catch (final Exception e) {
                     e.printStackTrace();
                     System.out.flush();
                     throw new RuntimeException("Server thread has encountered an exception", e);
                 }
-                System.out.println("Server thread finishes");
-                System.out.flush();
-                //return null;
             }
         });
         try {
-            Thread.sleep(2500);
+            // Take a break to complete jetty-servlet bootstrap process (as it is a 'black-box' at the current stage):
+            Thread.sleep(5000);
         } catch (final InterruptedException ignored) {
             // Ok
         }

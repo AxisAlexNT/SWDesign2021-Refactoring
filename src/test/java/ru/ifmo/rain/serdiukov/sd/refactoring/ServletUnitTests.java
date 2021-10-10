@@ -7,6 +7,7 @@ import ru.akirakozov.sd.refactoring.Main;
 import ru.ifmo.rain.serdiukov.sd.refactoring.util.APIRequestException;
 import ru.ifmo.rain.serdiukov.sd.refactoring.util.AppHTTPClient;
 import ru.ifmo.rain.serdiukov.sd.refactoring.util.Product;
+import ru.ifmo.rain.serdiukov.sd.refactoring.util.SingletonServerStarter;
 
 import java.util.List;
 import java.util.Map;
@@ -21,33 +22,13 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
 
 public class ServletUnitTests {
-    private static final ExecutorService exService;
-    private static AppHTTPClient appClient;
+    private final AppHTTPClient appClient;
 
-    static {
-        System.out.println("static() called in unit tests");
-        System.out.flush();
-        exService = Executors.newSingleThreadExecutor();
-        exService.submit(new Callable<>() { // or use submit to get a Future (a result of computation, you'll need a Callable, rather than runnable then)
-            @Override
-            public Object call() {
-                try {
-                    Main.main(new String[0]);
-                } catch (final InterruptedException ignored) {
-                    // That's ok, we are shutting down server after tests
-                } catch (final Exception e) {
-                    throw new RuntimeException("Server thread has encountered an exception", e);
-                }
-                return null;
-            }
-        });
-
-        exService.shutdown();
-        System.out.println("static() exited in unit tests");
-        System.out.flush();
+    public ServletUnitTests() {
+        appClient = SingletonServerStarter.getAppClient();
     }
 
-    //@Test
+    @Test
     public synchronized void productFetchTest() {
         try {
             final List<Product> products = appClient.getProducts();
@@ -57,18 +38,5 @@ public class ServletUnitTests {
         } catch (APIRequestException e) {
             fail("No exception was expected");
         }
-    }
-
-    @After
-    public void closeServer() {
-        System.out.println("After called in unit tests");
-        exService.shutdownNow();
-        try {
-            exService.awaitTermination(0, TimeUnit.MILLISECONDS);
-        } catch (final InterruptedException e) {
-            // Ok
-        }
-        System.out.println("After exited in unit tests");
-        exService.shutdownNow();
     }
 }

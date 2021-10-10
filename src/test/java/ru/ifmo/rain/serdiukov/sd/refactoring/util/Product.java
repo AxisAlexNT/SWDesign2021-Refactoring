@@ -1,15 +1,14 @@
 package ru.ifmo.rain.serdiukov.sd.refactoring.util;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
+import java.util.regex.Pattern;
 
 @Getter
 @ToString
+@EqualsAndHashCode
 public class Product {
     @NotNull
     private static final Comparator<Product> BY_PRICE_COMPARATOR = Comparator.comparingLong(Product::getPrice).thenComparing(Product::getName);
@@ -17,6 +16,13 @@ public class Product {
     @NonNull
     private final String name;
     private final int price;
+
+
+    /**
+     * Product name should only contain latin letters, digits, dashes, underscores, periods and brackets.
+     * It should also have a non-zero length.
+     */
+    private static final Pattern PRODUCT_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9-_()\\[\\]{}.]+$");
 
     public Product(@NotNull @NonNull String name, int price) {
         validateName(name);
@@ -30,7 +36,7 @@ public class Product {
             throw new IllegalArgumentException("Product name cannot be null or empty");
         }
 
-        if (name.matches("\\s+")) {
+        if (!PRODUCT_NAME_PATTERN.matcher(name).matches()) {
             throw new IllegalArgumentException("Product name must not contain whitespace");
         }
     }

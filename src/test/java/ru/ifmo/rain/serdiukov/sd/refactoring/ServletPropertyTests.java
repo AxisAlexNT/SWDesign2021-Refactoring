@@ -32,8 +32,6 @@ public class ServletPropertyTests {
     @Theory
     @Property(trials = 4)
     public synchronized void testProductsAreAddedAndSaved(final @NotNull @Size(min = 1, max = 16) Map<Long, Integer> preTestProductRecords) {
-        System.out.println("Test called in property tests");
-        System.out.flush();
         final Map<String, Integer> testProductRecords = preTestProductRecords.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().toString(), Map.Entry::getValue));
         try {
             final List<Product> existingProducts = appClient.getProducts();
@@ -81,10 +79,7 @@ public class ServletPropertyTests {
             }
 
         } catch (final APIRequestException e) {
-            throw new RuntimeException(e);
-            //fail("No exception was expected");
+            fail("No exception was expected");
         }
-        System.out.println("Test exited in property tests");
-        System.out.flush();
     }
 }
