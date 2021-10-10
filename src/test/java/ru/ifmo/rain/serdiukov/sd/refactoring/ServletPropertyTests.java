@@ -11,10 +11,7 @@ import ru.ifmo.rain.serdiukov.sd.refactoring.util.AppHTTPClient;
 import ru.ifmo.rain.serdiukov.sd.refactoring.util.Product;
 import ru.ifmo.rain.serdiukov.sd.refactoring.util.SingletonServerStarter;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -36,8 +33,11 @@ public class ServletPropertyTests {
         try {
             final List<Product> existingProducts = appClient.getProducts();
             assertThat("Product list should not be null", existingProducts, is(not(equalTo(null))));
-            final Map<String, Integer> existingProductRecords = existingProducts.stream().collect(Collectors.toMap(Product::getName, Product::getPrice,(v1, v2) -> v1));
-            assertThat("All stored products should have distinct names", existingProductRecords.size(), is(equalTo(existingProducts.size())));
+            final Map<String, Set<Integer>> existingProductRecords = new HashMap<>();
+            for (final Product existingProduct : existingProducts){
+                existingProductRecords.computeIfAbsent(existingProduct.getName(), s -> new HashSet<>());
+                existingProductRecords.get(existingProduct.getName()).add(existingProduct.getPrice());
+            }
 
             final Map<String, Integer> newProductRecords = testProductRecords.entrySet().stream().
                     filter(e -> {
@@ -55,7 +55,6 @@ public class ServletPropertyTests {
                             return false;
                         }
                     }).
-                    filter(e -> !existingProductRecords.containsKey(e.getKey())).
                     collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
             final List<Product> newProducts = newProductRecords.entrySet().stream().
@@ -66,16 +65,28 @@ public class ServletPropertyTests {
 
             final List<Product> modifiedProducts = appClient.getProducts();
             assertThat("Product list should not be null", modifiedProducts, is(not(equalTo(null))));
-            final Map<String, Integer> modifiedProductRecords = modifiedProducts.stream().collect(Collectors.toMap(Product::getName, Product::getPrice));
-            assertThat("All stored products should have distinct names", modifiedProductRecords.size(), is(equalTo(modifiedProducts.size())));
-            final Set<Product> modifiedProductsSet = new HashSet<>(modifiedProducts);
+            final Map<String, Set<Integer>> modifiedProductRecords = new HashMap<>();
+            for (final Product modifiedProduct : modifiedProducts) {
+                modifiedProductRecords.computeIfAbsent(modifiedProduct.getName(), s -> new HashSet<>());
+                modifiedProductRecords.get(modifiedProduct.getName()).add(modifiedProduct.getPrice());
+            }
 
             for (final Product existingProduct : existingProducts) {
-                assertThat("Old products should still remain in place", modifiedProductsSet.contains(existingProduct), is(equalTo(true)));
+                assertThat("Old product name should still remain in place",
+                        modifiedProductRecords.containsKey(existingProduct.getName()),
+                        is(equalTo(true)));
+                assertThat("Old product with given name and price should still remain in place",
+                        modifiedProductRecords.get(existingProduct.getName()).contains(existingProduct.getPrice()),
+                        is(equalTo(true)));
             }
 
             for (final Product newProduct : newProducts) {
-                assertThat("New products should have been added", modifiedProductsSet.contains(newProduct), is(equalTo(true)));
+                assertThat("New product name should have been added",
+                        modifiedProductRecords.containsKey(newProduct.getName()),
+                        is(equalTo(true)));
+                assertThat("New product with its name and price should have been added",
+                        modifiedProductRecords.get(newProduct.getName()).contains(newProduct.getPrice()),
+                        is(equalTo(true)));
             }
 
         } catch (final APIRequestException e) {
