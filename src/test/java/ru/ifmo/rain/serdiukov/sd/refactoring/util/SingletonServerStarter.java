@@ -6,9 +6,11 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+@SuppressWarnings("Convert2Lambda")
 public class SingletonServerStarter {
     private static final ExecutorService exService = Executors.newSingleThreadExecutor();
-    private static final AppHTTPClient appClient = new AppHTTPClient("http://localhost:8081");
+    private static final String TEST_SERVER_URL = "http://localhost:8081";
+    private static final AppHTTPClient appClient = new AppHTTPClient(TEST_SERVER_URL);
 
     static {
         System.out.println("Starting up server");
