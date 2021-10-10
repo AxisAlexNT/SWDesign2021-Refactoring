@@ -31,13 +31,15 @@ public class SingletonServerStarter {
             }
         });
         try {
+            System.out.println("Waiting for server thread to start");
             // Wait for the server thread to start:
             serverThreadReadiness.await();
             // Take a break to complete jetty-servlet bootstrap process (as it is a 'black-box' at the current stage):
-            Thread.sleep(500);
+            Thread.sleep(2500);
         } catch (final InterruptedException ignored) {
             // Ok, we are shutting down
         }
+        System.out.println("Singleton server starter initialization completed");
     }
 
     public static AppHTTPClient getAppClient() {

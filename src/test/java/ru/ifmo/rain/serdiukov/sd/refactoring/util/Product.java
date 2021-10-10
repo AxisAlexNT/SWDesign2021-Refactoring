@@ -46,4 +46,8 @@ public class Product {
             throw new IllegalArgumentException("Product price cannot be negative");
         }
     }
+
+    public static @NotNull Comparator<Product> getByPriceComparator(){
+        return BY_PRICE_COMPARATOR;
+    }
 }
