@@ -8,7 +8,7 @@ import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 import ru.ifmo.rain.serdiukov.sd.refactoring.util.APIRequestException;
 import ru.ifmo.rain.serdiukov.sd.refactoring.util.AppHTTPClient;
-import ru.ifmo.rain.serdiukov.sd.refactoring.util.Product;
+import ru.akirakozov.sd.refactoring.domain.Product;
 import ru.ifmo.rain.serdiukov.sd.refactoring.util.SingletonServerStarter;
 
 import java.util.*;

@@ -1,4 +1,4 @@
-package ru.ifmo.rain.serdiukov.sd.refactoring.util;
+package ru.akirakozov.sd.refactoring.domain;
 
 import lombok.*;
 import org.jetbrains.annotations.NotNull;

@@ -4,6 +4,7 @@ import lombok.NonNull;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.ContentResponse;
 import org.jetbrains.annotations.NotNull;
+import ru.akirakozov.sd.refactoring.domain.Product;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
