@@ -32,5 +32,5 @@ public abstract class AbstractProductServlet extends HttpServlet {
         response.setStatus(HttpServletResponse.SC_OK);
     }
 
-    protected abstract @NotNull @NonNull ResponsePage generateResponsePage(final @NotNull @NonNull HttpServletRequest request) throws IOException;
+    protected abstract @NotNull @NonNull ResponsePage generateResponsePage(final @NotNull @NonNull HttpServletRequest request);
 }

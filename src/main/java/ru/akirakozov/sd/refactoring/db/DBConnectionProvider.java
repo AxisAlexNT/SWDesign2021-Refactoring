@@ -18,7 +18,7 @@ public class DBConnectionProvider {
     /**
      * Constructs new {@link DBConnectionProvider} using given Database URL.
      *
-     * @param DB_URL An URL of database to be connected to.
+     * @param DB_URL The URL of database to be connected to.
      * @throws ApplicationBootstrapException In case initial connection to the database cannot be established and/or if schema cannot be defined.
      */
     public DBConnectionProvider(final @NotNull @NonNull String DB_URL) throws ApplicationBootstrapException {

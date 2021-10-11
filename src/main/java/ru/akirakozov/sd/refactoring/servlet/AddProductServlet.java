@@ -8,7 +8,6 @@ import ru.akirakozov.sd.refactoring.view.ResponsePage;
 import ru.akirakozov.sd.refactoring.view.SimpleTextPage;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 
 /**
  * A servlet that is responsible for adding products specified by HTTP Request.
@@ -30,7 +29,7 @@ public class AddProductServlet extends AbstractProductServlet {
     }
 
     @Override
-    protected @NotNull @NonNull ResponsePage generateResponsePage(final @NotNull @NonNull HttpServletRequest request) throws IOException {
+    protected @NotNull @NonNull ResponsePage generateResponsePage(final @NotNull @NonNull HttpServletRequest request) {
         final @NotNull @NonNull String name = request.getParameter(PRODUCT_NAME_PARAMETER_NAME);
         final long longPrice = Long.parseLong(request.getParameter(PRODUCT_PRICE_PARAMETER_NAME));
         final int price = Math.toIntExact(longPrice);

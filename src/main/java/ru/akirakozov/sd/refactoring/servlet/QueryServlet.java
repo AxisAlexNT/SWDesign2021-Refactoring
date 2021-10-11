@@ -11,7 +11,6 @@ import ru.akirakozov.sd.refactoring.view.ResponsePage;
 import ru.akirakozov.sd.refactoring.view.SimpleTextPage;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
@@ -36,7 +35,7 @@ public class QueryServlet extends AbstractProductServlet {
     }
 
     @Override
-    protected @NotNull @NonNull ResponsePage generateResponsePage(final @NotNull @NonNull HttpServletRequest request) throws IOException {
+    protected @NotNull @NonNull ResponsePage generateResponsePage(final @NotNull @NonNull HttpServletRequest request) {
         final @NonNull String command = request.getParameter(REQUEST_PARAMETER_NAME);
 
         final @Nullable QueryType queryType = queryTypeByCommand.get(command);
