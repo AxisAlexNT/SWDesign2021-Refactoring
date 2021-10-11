@@ -12,7 +12,9 @@ import ru.akirakozov.sd.refactoring.view.SimpleTextPage;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -73,17 +75,6 @@ public class QueryServlet extends AbstractProductServlet {
 
         QueryType(final @NotNull String commandName) {
             this.queryCommandName = commandName;
-        }
-
-        public static @Nullable QueryType getTypeByCommandName(final @NotNull String commandName) {
-            final List<QueryType> commands = Arrays.stream(QueryType.values()).filter(t -> Objects.equals(t.getQueryCommandName(), commandName)).toList();
-            assert commands.size() <= 1 : "There are multiple commands with the same query command parameter";
-            if (commands.isEmpty()) {
-                // No such command
-                return null;
-            } else {
-                return commands.get(0);
-            }
         }
     }
 
