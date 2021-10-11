@@ -141,7 +141,7 @@ public class ServletPropertyTests {
     public synchronized void testMinimumPricedProductQueryReturnsProductWithMinimalPrice() {
         try {
             final List<Product> existingProducts = appClient.getProducts();
-            final Optional<Product> queriedMostExpensiveProduct = appClient.getCheapestProduct();
+            final Optional<Product> queriedCheapestProduct = appClient.getCheapestProduct();
 
             assertThat("Product list should not be null", existingProducts, is(not(equalTo(null))));
             final NavigableSet<Product> existingProductsSet = new TreeSet<>(Product.getByPriceComparator());
@@ -154,17 +154,17 @@ public class ServletPropertyTests {
 
             if (existingProductsSet.isEmpty()) {
                 assertThat("No product with minimal price was expected in empty DB",
-                        queriedMostExpensiveProduct.isEmpty(),
+                        queriedCheapestProduct.isEmpty(),
                         is(equalTo(true))
                 );
             } else {
                 assertThat("There should be a product with minimal price in non-empty DB",
-                        queriedMostExpensiveProduct.isPresent(),
+                        queriedCheapestProduct.isPresent(),
                         is(equalTo(true))
                 );
                 final int minimalProductPrice = existingProductsSet.first().getPrice();
                 final Set<Product> productsWithMinimalPrice = productByPrice.get(minimalProductPrice);
-                final Product queriedMinimalProduct = queriedMostExpensiveProduct.get();
+                final Product queriedMinimalProduct = queriedCheapestProduct.get();
 
                 assertThat("Minimal product price cannot be less than a minimum of all products' prices", queriedMinimalProduct.getPrice(), is(not(lessThan(minimalProductPrice))));
                 assertThat("Minimal product price cannot be greater than a minimum of all products' prices", queriedMinimalProduct.getPrice(), is(not(greaterThan(minimalProductPrice))));
