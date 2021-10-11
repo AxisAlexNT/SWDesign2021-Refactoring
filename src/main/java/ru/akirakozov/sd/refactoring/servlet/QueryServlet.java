@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class QueryServlet extends HttpServlet {
     private static final @NotNull String REQUEST_PARAMETER_NAME = "command";
-    private static final Map<String, QueryType> queryTypeByCommand = Arrays.stream(QueryType.values()).collect(Collectors.toMap(qt -> qt.queryCommandName, qt -> qt));
-    private final ProductRepository productRepository;
+    private static final @NotNull Map<@NotNull String, @NotNull QueryType> queryTypeByCommand = Arrays.stream(QueryType.values()).collect(Collectors.toMap(qt -> qt.queryCommandName, qt -> qt));
+    private final @NotNull @NonNull ProductRepository productRepository;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -59,16 +59,13 @@ public class QueryServlet extends HttpServlet {
                 final int productCount = productRepository.getProductCount();
                 responsePage = QueryResultPage.builder().queryHeader("Number of products: ").queryResult(String.valueOf(productCount)).build();
             }
-            default -> {
-                throw new IllegalStateException("Impossible query type");
-            }
+            default -> throw new IllegalStateException("Impossible query type");
         }
 
         final @NotNull @NonNull String responsePageHTMLCode = responsePage.getHTMLCode();
         response.getWriter().println(responsePageHTMLCode);
-
-
     }
+
 
     public enum QueryType {
         MAX("max"),

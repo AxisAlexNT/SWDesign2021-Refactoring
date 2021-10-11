@@ -28,7 +28,7 @@ public class Main {
         final ProductRepository productRepository = new ProductRepository(dbConnectionProvider);
 
         context.addServlet(new ServletHolder(new AddProductServlet()), "/add-product");
-        context.addServlet(new ServletHolder(new GetProductsServlet()), "/get-products");
+        context.addServlet(new ServletHolder(new GetProductsServlet(productRepository)), "/get-products");
         context.addServlet(new ServletHolder(new QueryServlet(productRepository)), "/query");
 
         server.start();
