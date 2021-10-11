@@ -37,7 +37,7 @@ public class SingletonServerStarter {
             // Wait for the server thread to start:
             serverThreadReadiness.await();
             // Take a break to complete jetty-servlet bootstrap process (as it is a 'black-box' at the current stage):
-            Thread.sleep(1500);
+            Thread.sleep(5000);
         } catch (final InterruptedException ignored) {
             // Ok, we are shutting down
         }
