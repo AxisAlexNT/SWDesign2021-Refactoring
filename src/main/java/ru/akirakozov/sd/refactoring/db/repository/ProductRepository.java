@@ -1,10 +1,11 @@
 package ru.akirakozov.sd.refactoring.db.repository;
 
+import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 import ru.akirakozov.sd.refactoring.db.DBConnectionProvider;
 import ru.akirakozov.sd.refactoring.domain.Product;
 import ru.akirakozov.sd.refactoring.ex.DBLayerException;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -13,10 +14,14 @@ import java.util.List;
 import java.util.Optional;
 
 public class ProductRepository {
-    private final Connection dbConnection = DBConnectionProvider.getDbConnection();
+    private final @NotNull @NonNull DBConnectionProvider dbConnectionProvider;
+
+    public ProductRepository(@NotNull @NonNull DBConnectionProvider dbConnectionProvider) {
+        this.dbConnectionProvider = dbConnectionProvider;
+    }
 
     public List<Product> getProducts() {
-        try (final Statement stmt = dbConnection.createStatement()) {
+        try (final Statement stmt = dbConnectionProvider.getConnection().createStatement()) {
             try (final ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT")) {
                 final List<Product> result = new ArrayList<>();
                 while (rs.next()) {
@@ -35,7 +40,7 @@ public class ProductRepository {
     public void addProduct(final Product product) {
         final String sql = "INSERT INTO PRODUCT " +
                 "(NAME, PRICE) VALUES (\"" + product.getName() + "\"," + product.getPrice() + ")";
-        try (final Statement stmt = dbConnection.createStatement()) {
+        try (final Statement stmt = dbConnectionProvider.getConnection().createStatement()) {
             stmt.executeUpdate(sql);
         } catch (final SQLException sqlException) {
             throw new DBLayerException("Cannot execute add-product statement", sqlException);
@@ -43,7 +48,7 @@ public class ProductRepository {
     }
 
     public Optional<Product> getMaxPricedProduct() {
-        try (final Statement stmt = dbConnection.createStatement()) {
+        try (final Statement stmt = dbConnectionProvider.getConnection().createStatement()) {
             try (final ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE DESC LIMIT 1")) {
                 if (rs.next()) {
                     String name = rs.getString("name");
@@ -59,7 +64,7 @@ public class ProductRepository {
     }
 
     public Optional<Product> getMinPricedProduct() {
-        try (final Statement stmt = dbConnection.createStatement()) {
+        try (final Statement stmt = dbConnectionProvider.getConnection().createStatement()) {
             try (final ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE LIMIT 1")) {
                 if (rs.next()) {
                     String name = rs.getString("name");
@@ -75,7 +80,7 @@ public class ProductRepository {
     }
 
     public int getProductCount() {
-        try (final Statement stmt = dbConnection.createStatement()) {
+        try (final Statement stmt = dbConnectionProvider.getConnection().createStatement()) {
             try (final ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM PRODUCT")) {
 
                 if (rs.next()) {
@@ -89,7 +94,7 @@ public class ProductRepository {
     }
 
     public int getProductsPriceSum() {
-        try (final Statement stmt = dbConnection.createStatement()) {
+        try (final Statement stmt = dbConnectionProvider.getConnection().createStatement()) {
             try (final ResultSet rs = stmt.executeQuery("SELECT SUM(price) FROM PRODUCT")) {
 
                 if (rs.next()) {
