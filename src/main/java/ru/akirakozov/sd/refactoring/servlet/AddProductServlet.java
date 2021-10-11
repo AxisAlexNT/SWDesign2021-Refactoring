@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
+ * A servlet that is responsible for adding products specified by HTTP Request.
+ *
  * @author akirakozov
  */
 public class AddProductServlet extends AbstractProductServlet {
@@ -18,6 +20,11 @@ public class AddProductServlet extends AbstractProductServlet {
     private static final @NotNull @NonNull String PRODUCT_PRICE_PARAMETER_NAME = "price";
     private static final @NotNull @NonNull String CONFIRMATION_PAGE_TEXT = "OK";
 
+    /**
+     * Constructs a new {@link AddProductServlet}.
+     *
+     * @param productRepository A {@link ProductRepository} to add products into.
+     */
     public AddProductServlet(final @NotNull @NonNull ProductRepository productRepository) {
         super(productRepository);
     }

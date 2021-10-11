@@ -9,14 +9,29 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * A class that's responsible with JDBC communications between an Application and Database.
+ */
 public class DBConnectionProvider {
     private final @NotNull @NonNull String DB_URL;
 
+    /**
+     * Constructs new {@link DBConnectionProvider} using given Database URL.
+     *
+     * @param DB_URL An URL of database to be connected to.
+     * @throws ApplicationBootstrapException In case initial connection to the database cannot be established and/or if schema cannot be defined.
+     */
     public DBConnectionProvider(final @NotNull @NonNull String DB_URL) throws ApplicationBootstrapException {
         this.DB_URL = DB_URL;
         testDBConnection();
     }
 
+    /**
+     * Returns a JDBC connection to the Application's Database. This method could be modified to cache connections, so it does not guarantee that connection would be newly created, but guarantees that it's in a valid state.
+     *
+     * @return A JDBC connection to the Application's Database.
+     * @throws SQLException In case connection to the database cannot be established.
+     */
     public Connection getConnection() throws SQLException {
         return DriverManager.getConnection(DB_URL);
     }

@@ -18,12 +18,19 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
+ * A servlet that implements queries on {@link Product}s processed by this application.
+ *
  * @author akirakozov
  */
 public class QueryServlet extends AbstractProductServlet {
     private static final @NotNull String REQUEST_PARAMETER_NAME = "command";
     private static final @NotNull Map<@NotNull String, @NotNull QueryType> queryTypeByCommand = Arrays.stream(QueryType.values()).collect(Collectors.toMap(qt -> qt.queryCommandName, qt -> qt));
 
+    /**
+     * Constructs new {@link QueryServlet} using given {@link ProductRepository}.
+     *
+     * @param productRepository A {@link ProductRepository} that's backed by this application's database.
+     */
     public QueryServlet(final @NotNull @NonNull ProductRepository productRepository) {
         super(productRepository);
     }
@@ -64,15 +71,40 @@ public class QueryServlet extends AbstractProductServlet {
     }
 
 
+    /**
+     * An enumeration that describes which query is requested.
+     */
     public enum QueryType {
+        /**
+         * Maximum query will return a {@link Product} with the maximal value of field {@code price}, or nothing in case no {@link Product}s are stored in this application.
+         */
         MAX("max"),
+        /**
+         * Minimum query will return a {@link Product} with the minimal value of field {@code price}, or nothing in case no {@link Product}s are stored in this application.
+         */
         MIN("min"),
+        /**
+         * Count query will return a total sum of field {@code price} values of each {@link Product}s stored in this application, counting all possible duplicates.
+         * If no {@link Product}s are stored in this application, sum query result will equal to zero.
+         */
         SUM("sum"),
+        /**
+         * Count query will return a total number of {@link Product}s stored in this application, counting all possible duplicates.
+         * If no {@link Product}s are stored in this application, count query result will equal to zero.
+         */
         COUNT("count");
 
+        /**
+         * Describes a 'command' HTTP GET parameter name that corresponds to each type of query.
+         */
         @Getter
         public final @NotNull @NonNull String queryCommandName;
 
+        /**
+         * Constructs a new type of query. All queries must have distinct values of {@code commandName} field values.
+         *
+         * @param commandName A value of 'command' HTTP GET parameter that corresponds to this new query type.
+         */
         QueryType(final @NotNull String commandName) {
             this.queryCommandName = commandName;
         }

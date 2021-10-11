@@ -11,6 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * An abstract servlet that is specifically designed to withhold a reference on {@link ProductRepository} and takes servlet-aware response processing on itself.
+ * Implementations must generate response pages using data from HTTP request and repository.
+ */
 public abstract class AbstractProductServlet extends HttpServlet {
     @Getter
     protected final @NotNull @NonNull ProductRepository productRepository;
@@ -20,7 +24,7 @@ public abstract class AbstractProductServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(final @NotNull @NonNull HttpServletRequest request, final @NotNull @NonNull HttpServletResponse response) throws IOException {
+    protected final void doGet(final @NotNull @NonNull HttpServletRequest request, final @NotNull @NonNull HttpServletResponse response) throws IOException {
         final ResponsePage responsePage = generateResponsePage(request);
 
         response.setContentType("text/html");

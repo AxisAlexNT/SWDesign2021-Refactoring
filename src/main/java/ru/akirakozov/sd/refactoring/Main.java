@@ -10,13 +10,24 @@ import ru.akirakozov.sd.refactoring.servlet.AddProductServlet;
 import ru.akirakozov.sd.refactoring.servlet.GetProductsServlet;
 import ru.akirakozov.sd.refactoring.servlet.QueryServlet;
 
+import javax.servlet.http.HttpServlet;
+import java.util.Map;
+
 /**
+ * Main class of this HTTP Application Server.
+ *
  * @author akirakozov
  */
 public class Main {
     private static final @NotNull String DB_URL = "jdbc:sqlite:test.db";
     private static final int SERVER_PORT = 8081;
 
+    /**
+     * Launches HTTP Application Server.
+     *
+     * @param args An array of arguments.
+     * @throws Exception In case component fails to start or was interrupted.
+     */
     public static void main(String[] args) throws Exception {
         final Server server = new Server(SERVER_PORT);
 
@@ -27,11 +38,21 @@ public class Main {
         final DBConnectionProvider dbConnectionProvider = new DBConnectionProvider(DB_URL);
         final ProductRepository productRepository = new ProductRepository(dbConnectionProvider);
 
-        context.addServlet(new ServletHolder(new AddProductServlet(productRepository)), "/add-product");
-        context.addServlet(new ServletHolder(new GetProductsServlet(productRepository)), "/get-products");
-        context.addServlet(new ServletHolder(new QueryServlet(productRepository)), "/query");
+        final Map<String, HttpServlet> applicationServlets = Map.of(
+                "/add-product",     new AddProductServlet(productRepository),
+                "/get-products",    new GetProductsServlet(productRepository),
+                "/query",           new QueryServlet(productRepository)
+        );
+
+        applicationServlets.forEach((path, servlet) ->
+                context.addServlet(new ServletHolder(servlet), path)
+        );
 
         server.start();
-        server.join();
+        try {
+            server.join();
+        } catch (final InterruptedException ignored) {
+            // Ok, server is interrupted and will shut down
+        }
     }
 }
