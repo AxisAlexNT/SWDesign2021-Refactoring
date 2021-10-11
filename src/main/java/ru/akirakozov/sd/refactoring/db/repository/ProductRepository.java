@@ -73,19 +73,7 @@ public class ProductRepository {
      * @return Some product with the maximal price.
      */
     public Optional<Product> getMaxPricedProduct() {
-        try (final Statement stmt = dbConnectionProvider.getConnection().createStatement()) {
-            try (final ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE DESC LIMIT 1")) {
-                if (rs.next()) {
-                    String name = rs.getString("name");
-                    int price = rs.getInt("price");
-                    final Product product = new Product(name, price);
-                    return Optional.of(product);
-                }
-                return Optional.empty();
-            }
-        } catch (final SQLException sqlException) {
-            throw new DBLayerException("Cannot execute max-priced product", sqlException);
-        }
+        return getSingleProduct("SELECT * FROM PRODUCT ORDER BY PRICE DESC LIMIT 1");
     }
 
     /**
@@ -96,8 +84,12 @@ public class ProductRepository {
      * @return Some product with the minimal price.
      */
     public Optional<Product> getMinPricedProduct() {
+        return getSingleProduct("SELECT * FROM PRODUCT ORDER BY PRICE LIMIT 1");
+    }
+
+    private @NotNull Optional<Product> getSingleProduct(final @NotNull @NonNull String sqlQuery) {
         try (final Statement stmt = dbConnectionProvider.getConnection().createStatement()) {
-            try (final ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE LIMIT 1")) {
+            try (final ResultSet rs = stmt.executeQuery(sqlQuery)) {
                 if (rs.next()) {
                     String name = rs.getString("name");
                     int price = rs.getInt("price");
@@ -107,7 +99,7 @@ public class ProductRepository {
                 return Optional.empty();
             }
         } catch (final SQLException sqlException) {
-            throw new DBLayerException("Cannot execute min-priced product", sqlException);
+            throw new DBLayerException("Cannot execute single-product statement", sqlException);
         }
     }
 
