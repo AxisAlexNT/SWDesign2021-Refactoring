@@ -1,37 +1,36 @@
 package ru.akirakozov.sd.refactoring.servlet;
 
-import javax.servlet.http.HttpServlet;
+import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
+import ru.akirakozov.sd.refactoring.db.repository.ProductRepository;
+import ru.akirakozov.sd.refactoring.domain.Product;
+import ru.akirakozov.sd.refactoring.view.ResponsePage;
+import ru.akirakozov.sd.refactoring.view.SimpleTextPage;
+
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
 
 /**
  * @author akirakozov
  */
-public class AddProductServlet extends HttpServlet {
+public class AddProductServlet extends AbstractProductServlet {
+    private static final @NotNull @NonNull String PRODUCT_NAME_PARAMETER_NAME = "name";
+    private static final @NotNull @NonNull String PRODUCT_PRICE_PARAMETER_NAME = "price";
+    private static final @NotNull @NonNull String CONFIRMATION_PAGE_TEXT = "OK";
+
+    public AddProductServlet(final @NotNull @NonNull ProductRepository productRepository) {
+        super(productRepository);
+    }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String name = request.getParameter("name");
-        long price = Long.parseLong(request.getParameter("price"));
+    protected @NotNull @NonNull ResponsePage generateResponsePage(final @NotNull @NonNull HttpServletRequest request) throws IOException {
+        final @NotNull @NonNull String name = request.getParameter(PRODUCT_NAME_PARAMETER_NAME);
+        final long longPrice = Long.parseLong(request.getParameter(PRODUCT_PRICE_PARAMETER_NAME));
+        final int price = Math.toIntExact(longPrice);
 
-        try {
-            try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
-                String sql = "INSERT INTO PRODUCT " +
-                        "(NAME, PRICE) VALUES (\"" + name + "\"," + price + ")";
-                Statement stmt = c.createStatement();
-                stmt.executeUpdate(sql);
-                stmt.close();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        final Product newProduct = new Product(name, price);
+        this.getProductRepository().addProduct(newProduct);
 
-        response.setContentType("text/html");
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.getWriter().println("OK");
+        return SimpleTextPage.builder().pageText(CONFIRMATION_PAGE_TEXT).build();
     }
 }
