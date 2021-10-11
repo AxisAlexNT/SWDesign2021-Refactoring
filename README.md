@@ -8,7 +8,7 @@
 - One unit test checks overall system response (I like property tests more in this case).
 - Five property tests were added, each of them compares result of Application's response with the trivial algorithm
   results. It covers both get/add methods and all query methods.
-- To start server (as it was a blackbox) a special `SingletoneServerStarter` was added, static initialization of which
+- To start server (as it was a blackbox) a special `SingletonServerStarter` was added, static initialization of which
   during test phase enforces Server to start in a different thread. A 'barrier' synchronization primitive was used to
   synchronize main test thread and server thread. Some delay (using `Thread.sleep()`) was added to ensure server thread
   has started normally (after invocation of `Main.main()` method).
@@ -36,7 +36,7 @@
 
 **Notes:**
 
-- `SingletoneServerStarter` was used instead of `@BeforeAll` because JUnit executes tests in parallel there is no
+- `SingletonServerStarter` was used instead of `@BeforeAll` because JUnit executes tests in parallel there is no
   ordering between `@Before`-like and `@After`-like calls in different tests. Here this is an issue, because only one
   server could be running at the moment: two servers cannot share one HTTP port `8081`.
 - Junit 4 was used instead of Junit 5, because Property tests framework Quickcheck is dependent on Junit 4 and there is
