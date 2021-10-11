@@ -43,7 +43,7 @@ public class AppHTTPClient implements AutoCloseable {
             throw new APIRequestException("Cannot get products due to the network communication issues", e);
         }
 
-        final String[] lines = responseHTML.split("\r\n");
+        final String[] lines = responseHTML.split("\\R");
         final int lineCount = lines.length;
 
         return getProductsFromResponseLines(
@@ -102,7 +102,7 @@ public class AppHTTPClient implements AutoCloseable {
             throw new APIRequestException("HTTP Status is not 200 OK after requesting " + command);
         }
 
-        final String[] lines = responseHTML.split("\r\n");
+        final String[] lines = responseHTML.split("\\R");
         final int lineCount = lines.length;
 
         return getProductsFromResponseLines(
@@ -152,8 +152,11 @@ public class AppHTTPClient implements AutoCloseable {
             throw new APIRequestException("HTTP Status is not 200 OK after requesting " + command);
         }
 
-        final String[] lines = responseHTML.split("\r\n");
-        final int lineCount = lines.length;
+        final String[] lines = responseHTML.split("\\R");
+
+        if (lines.length != 4){
+            throw new APIRequestException("Malformed API response: expected exactly 4 lines in the response");
+        }
 
         final String responseLine = lines[2];
 
