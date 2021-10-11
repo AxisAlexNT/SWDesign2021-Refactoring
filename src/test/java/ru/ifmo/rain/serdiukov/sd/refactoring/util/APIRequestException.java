@@ -8,8 +8,4 @@ public class APIRequestException extends Exception {
     public APIRequestException(String message, Throwable cause) {
         super(message, cause);
     }
-
-    public APIRequestException(Throwable cause) {
-        super(cause);
-    }
 }
